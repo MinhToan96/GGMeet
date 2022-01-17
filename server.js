@@ -11,9 +11,9 @@ const io = require("socket.io")(server, {
 app.use(express.static(path.join(__dirname,"")));
 var userConnections = [];
 io.on("connection",(socket)=>{
-    console.log("socket id is ", socket.id);
+    console.log("socket id is ", socket.id); 
     socket.on("userconnect", (data)=> {
-        console.log("userconnect", data.displayName, data.meetingid);
+        console.log("userconnent", data.displayName, data.meetingid);
         var other_users = userConnections.filter((p) => p.meeting_id == data.meetingid);
         userConnections.push({
             connectionId: socket.id,
@@ -27,7 +27,7 @@ io.on("connection",(socket)=>{
                 connId: socket.id,
             })
         })
-
+        socket.emit("inform_me_about_other_user", other_users);
 
     });
     socket.on("SDPProcess", (data)=> {
