@@ -60,10 +60,12 @@ io.on("connection", (socket) => {
     if(disUser){
       var meetingId = disUser.meeting_id;
       userConnections = userConnections.filter((p)=>p.connectionId != socket.id);
-      var list = userConnections.filter((p)=>p.meeting_id == meetingId)
+      var list = userConnections.filter((p)=>p.meeting_id == meetingId);
       list.forEach((v)=>{
+        var userNumberAfUserLeave = userConnections.length;
         socket.to(v.connectionId).emit("inform_other_about_disconnected_user", {
           connId: socket.id,
+          uNumber: userNumberAfUserLeave,
         });
       });
     }

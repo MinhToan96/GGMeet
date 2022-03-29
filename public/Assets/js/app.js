@@ -349,6 +349,8 @@ var MyApp = (function () {
     });
     socket.on("inform_other_about_disconnected_user", function(data){
       $("#"+data.connId).remove();
+      $(".participant-count").text(data.uNumber);
+      $("#participant_" + data.connId + "").remove();
       AppProcess.closeConnectionCall(data.connId);
     })
     socket.on("inform_others_about_me", function (data) {
@@ -409,10 +411,27 @@ var MyApp = (function () {
   $(document).on("click", ".people-heading", function(){
     $(".chat-show-wrap").hide(300);
     $(".in-call-wrap-up").show(300);
+    $(this).addClass("active");
+    $(".chat-heading").removeClass("active");
   });
   $(document).on("click", ".chat-heading", function(){
-    $(".chat-show-wrap").show(300);
+    $(".chat-show-wrap").show(300); 
     $(".in-call-wrap-up").hide(300);
+    $(this).addClass("active");
+    $(".people-heading").removeClass("active");
+  });
+  $(document).on("click", ".meeting-heading-cross", function(){
+    $(".g-right-details-wrap").hide(300);
+  });
+  $(document).on("click", ".top-left-participant-wrap", function(){
+    $(".g-right-details-wrap").show(300);
+    $(".in-call-wrap-up").show(300);
+    $(".chat-show-wrap").hide(300); 
+  });
+  $(document).on("click", ".top-left-chat-wrap", function(){
+    $(".g-right-details-wrap").show(300);
+    $(".in-call-wrap-up").hide(300);
+    $(".chat-show-wrap").show(300); 
   });
   return {
     _init: function (uid, mid) {
