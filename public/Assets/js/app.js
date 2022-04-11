@@ -34,11 +34,15 @@ var AppProcess = (function () {
       }
       if (isAudioMute) {
         audio.enabled = true;
-        $(this).html("<span class='material-icons' style='width: 100%;'>mic</span>");
+        $(this).html(
+          "<span class='material-icons' style='width: 100%;'>mic</span>"
+        );
         updateMediaSenders(audio, rtp_aud_senders);
       } else {
         audio.enabled = false;
-        $(this).html("<span class='material-icons' style='width: 100%;'>mic-off</span>");
+        $(this).html(
+          "<span class='material-icons' style='width: 100%;'>mic-off</span>"
+        );
         removeMediaSenders(rtp_aud_senders);
       }
       isAudioMute = !isAudioMute;
@@ -122,7 +126,9 @@ var AppProcess = (function () {
         "<span class='material-icons' style='width: 100%'>videocam_on</span>"
       );
     }
-      $("#ScreenShareOnOf").html('<span class="material-icons">present_to_all</span><div>Present Now</div>')
+    $("#ScreenShareOnOf").html(
+      '<span class="material-icons">present_to_all</span><div>Present Now</div>'
+    );
     video_st = newVideoState;
     removeVideoStream(rtp_vid_senders);
     try {
@@ -143,10 +149,12 @@ var AppProcess = (function () {
           },
           audio: false,
         });
-        vstream.oninactive = (e) =>{
+        vstream.oninactive = (e) => {
           removeVideoStream(rtp_vid_senders);
-          $("#ScreenShareOnOf").html('<span class="material-icons">present_to_all</span><div>Present Now</div>');
-        }
+          $("#ScreenShareOnOf").html(
+            '<span class="material-icons">present_to_all</span><div>Present Now</div>'
+          );
+        };
       }
       if (vstream && vstream.getVideoTracks().length > 0) {
         videoCamTrack = vstream.getVideoTracks()[0];
@@ -160,16 +168,21 @@ var AppProcess = (function () {
       return;
     }
     video_st = newVideoState;
-    if(newVideoState == video_states.Camera){
-      $("#videoCamOnOff").html('<span class="material-icons" style="width: 100%;">videocam</span>');
-      $("#ScreenShareOnOf").html('<span class="material-icons">present_to_all</span><div>Present Now</div>');
-    }else if(newVideoState == video_states.ScreenShare){      
-      $("#videoCamOnOff").html('<span class="material-icons" style="width: 100%;">videocam_off</span>');
-      $("#ScreenShareOnOf").html('<span class="material-icons text-success">present_to_all</span><div class="text-success">Stop Present Now</div>');
+    if (newVideoState == video_states.Camera) {
+      $("#videoCamOnOff").html(
+        '<span class="material-icons" style="width: 100%;">videocam</span>'
+      );
+      $("#ScreenShareOnOf").html(
+        '<span class="material-icons">present_to_all</span><div>Present Now</div>'
+      );
+    } else if (newVideoState == video_states.ScreenShare) {
+      $("#videoCamOnOff").html(
+        '<span class="material-icons" style="width: 100%;">videocam_off</span>'
+      );
+      $("#ScreenShareOnOf").html(
+        '<span class="material-icons text-success">present_to_all</span><div class="text-success">Stop Present Now</div>'
+      );
     }
-
-
-
   }
   var iceConfiguration = {
     iceServers: [
@@ -280,22 +293,22 @@ var AppProcess = (function () {
       }
     }
   }
-  async function closeConnection(connid){
-    peers_connection_ids[connid]=null;
-    if(peers_connection[connid]){
+  async function closeConnection(connid) {
+    peers_connection_ids[connid] = null;
+    if (peers_connection[connid]) {
       peers_connection[connid].close();
       peers_connection[connid] = null;
     }
-    if(remote_aud_stream[connid]){
-      remote_aud_stream[connid].getTracks().forEach((t)=>{
-        if(t.stop) t.stop();
-      })
+    if (remote_aud_stream[connid]) {
+      remote_aud_stream[connid].getTracks().forEach((t) => {
+        if (t.stop) t.stop();
+      });
       remote_aud_stream[connid] = null;
     }
-    if(remote_vid_stream[connid]){
-      remote_vid_stream[connid].getTracks().forEach((t)=>{
-        if(t.stop) t.stop();
-      })
+    if (remote_vid_stream[connid]) {
+      remote_vid_stream[connid].getTracks().forEach((t) => {
+        if (t.stop) t.stop();
+      });
       remote_vid_stream[connid] = null;
     }
   }
@@ -347,12 +360,12 @@ var MyApp = (function () {
         }
       }
     });
-    socket.on("inform_other_about_disconnected_user", function(data){
-      $("#"+data.connId).remove();
+    socket.on("inform_other_about_disconnected_user", function (data) {
+      $("#" + data.connId).remove();
       $(".participant-count").text(data.uNumber);
       $("#participant_" + data.connId + "").remove();
       AppProcess.closeConnectionCall(data.connId);
-    })
+    });
     socket.on("inform_others_about_me", function (data) {
       addUser(data.other_user_id, data.connId, data.userNumber);
       AppProcess.setNewConnection(data.connId);
@@ -362,7 +375,11 @@ var MyApp = (function () {
       var userNumb = userNumber + 1;
       if (other_users) {
         for (var i = 0; i < other_users.length; i++) {
-          addUser(other_users[i].user_id, other_users[i].connectionId, userNumb);
+          addUser(
+            other_users[i].user_id,
+            other_users[i].connectionId,
+            userNumb
+          );
           AppProcess.setNewConnection(other_users[i].connectionId);
         }
       }
@@ -370,33 +387,55 @@ var MyApp = (function () {
     socket.on("SDPProcess", async function (data) {
       await AppProcess.processClientFunc(data.message, data.from_connid);
     });
-     socket.on("showChatMessage", function(data){
-    var time = new Date();
-    var lTime = time.toLocaleString("en-US",{
-      hour:"numeric",
-      minute:"numeric",
-      hour12:true
-    })
-    var div =$("<div>").html("<span class='font-weight-bold mr-3' style='color:black'>"+data.from+"</span>"+lTime+"</br>"+data.message);
-    $("#messages").append(div);
-  });
+    socket.on("showChatMessage", function (data) {
+      var time = new Date();
+      var lTime = time.toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      });
+      var div = $("<div>").html(
+        "<span class='font-weight-bold mr-3' style='color:black'>" +
+          data.from +
+          "</span>" +
+          lTime +
+          "</br>" +
+          data.message
+      );
+      $("#messages").append(div);
+    });
   }
-  function eventHandeling(){
-    $("#btnsend").on("click", function(){
+  function eventHandeling() {
+    $("#btnsend").on("click", function () {
       var msgData = $("#msgbox").val();
       socket.emit("sendMessage", msgData);
       var time = new Date();
-      var lTime = time.toLocaleString("en-US",{
-        hour:"numeric",
-        minute:"numeric",
-        hour12:true
-      })
-      var div =$("<div>").html("<span class='font-weight-bold mr-3' style='color:black'>"+user_id+"</span>"+lTime+"</br>"+msgData);
+      var lTime = time.toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      });
+      var div = $("<div>").html(
+        "<span class='font-weight-bold mr-3' style='color:black'>" +
+          user_id +
+          "</span>" +
+          lTime +
+          "</br>" +
+          msgData
+      );
       $("#messages").append(div);
       $("#msgbox").val("");
-    })
-  }
- 
+    });
+
+    var url = window.location.href;
+    $(".meeting_url").text(url);
+    // !copy link hiển thị ở Meeting Details, còn đang LỖI
+
+    $("#divUsers").on("dblclick", "video", function(){
+      this.requestFullscreen();
+    });
+  };
+
   function addUser(other_user_id, connId, userNum) {
     var newDivId = $("#otherTemplate").clone();
     newDivId = newDivId.attr("id", connId).addClass("other");
@@ -405,57 +444,136 @@ var MyApp = (function () {
     newDivId.find("audio").attr("id", "a_" + connId);
     newDivId.show();
     $("#divUsers").append(newDivId);
-    $(".in-call-wrap-up").append(' <div class="in-call-wrap d-flex justify-content-between align-items-center mb-3" id="participant_'+connId+'"> <div class="participant-img-name-wrap display-center cursor-pointer"> <div class="participant-imp"> <img src="public/Assets/images/other.jpg" alt="" class="border border-secondary" style="height: 40px; width: 40px; border-radius: 50%;"> </div> <div class="participant-name ml-2">'+other_user_id+'</div> </div> <div class="participant-action-wrap display-center "> <div class="participant-action-dot display-center mr-2 cursor-pointer"> <span class="material-icons"> more_vert </span> </div> <div class="participant-action-pin display-center mr-2 cursor-pointer"> <span class="material-icons"> push_pin </span> </div> </div> </div>');
+    $(".in-call-wrap-up").append(
+      ' <div class="in-call-wrap d-flex justify-content-between align-items-center mb-3" id="participant_' +
+        connId +
+        '"> <div class="participant-img-name-wrap display-center cursor-pointer"> <div class="participant-imp"> <img src="public/Assets/images/other.jpg" alt="" class="border border-secondary" style="height: 40px; width: 40px; border-radius: 50%;"> </div> <div class="participant-name ml-2">' +
+        other_user_id +
+        '</div> </div> <div class="participant-action-wrap display-center "> <div class="participant-action-dot display-center mr-2 cursor-pointer"> <span class="material-icons"> more_vert </span> </div> <div class="participant-action-pin display-center mr-2 cursor-pointer"> <span class="material-icons"> push_pin </span> </div> </div> </div>'
+    );
     $(".participant-count").text(userNum);
   }
-  $(document).on("click", ".people-heading", function(){
+  $(document).on("click", ".people-heading", function () {
     $(".chat-show-wrap").hide(300);
     $(".in-call-wrap-up").show(300);
     $(this).addClass("active");
     $(".chat-heading").removeClass("active");
   });
-  $(document).on("click", ".chat-heading", function(){
-    $(".chat-show-wrap").show(300); 
+  $(document).on("click", ".chat-heading", function () {
+    $(".chat-show-wrap").show(300);
     $(".in-call-wrap-up").hide(300);
     $(this).addClass("active");
     $(".people-heading").removeClass("active");
   });
-  $(document).on("click", ".meeting-heading-cross", function(){
+  $(document).on("click", ".meeting-heading-cross", function () {
     $(".g-right-details-wrap").hide(300);
   });
-  $(document).on("click", ".top-left-participant-wrap", function(){
+  $(document).on("click", ".top-left-participant-wrap", function () {
+    $("people-heading").addClass("active");
+    $(".chat-heading").removeClass("active");
     $(".g-right-details-wrap").show(300);
     $(".in-call-wrap-up").show(300);
-    $(".chat-show-wrap").hide(300); 
+    $(".chat-show-wrap").hide(300);
   });
-  $(document).on("click", ".top-left-chat-wrap", function(){
+  $(document).on("click", ".top-left-chat-wrap", function () {
+    $("people-heading").removeClass("active");
+    $(".chat-heading").addClass("active");
     $(".g-right-details-wrap").show(300);
     $(".in-call-wrap-up").hide(300);
-    $(".chat-show-wrap").show(300); 
+    $(".chat-show-wrap").show(300);
   });
-  $(document).on("click", ".end-call-wrap", function(){
-    $(".top-box-show").css({
-      "display":"block"
-    }).html('<div class="top-box align-vertical-middle profile-dialogue-show"> <h4 class="mt-3" style="text-align:center; color: white;">Leave Meeting</h4> <hr> <div class="call-leave-cancel-action d-flex justify-content-center align-items-center w-100"> <a href="/action.html"><button class="call-leave-action btn btn-danger mr-5">Leave</button></a> <button class="call-cancel-action btn btn-secondary">Cancel</button> </div> </div>');
+  $(document).on("click", ".end-call-wrap", function () {
+    $(".top-box-show")
+      .css({
+        display: "block",
+      })
+      .html(
+        '<div class="top-box align-vertical-middle profile-dialogue-show"> <h4 class="mt-3" style="text-align:center; color: white;">Leave Meeting</h4> <hr> <div class="call-leave-cancel-action d-flex justify-content-center align-items-center w-100"> <a href="/action.html"><button class="call-leave-action btn btn-danger mr-5">Leave</button></a> <button class="call-cancel-action btn btn-secondary">Cancel</button> </div> </div>'
+      );
   });
-  $(document).mouseup(function(e){
+  $(document).mouseup(function (e) {
     var container = new Array();
     container.push($(".top-box-show"));
-    $.each(container, function(key,value){
-      if(!$(value).is(e.target) && $(value).has(e.target).length == 0){
+    $.each(container, function (key, value) {
+      if (!$(value).is(e.target) && $(value).has(e.target).length == 0) {
         $(value).empty();
-      };
+      }
     });
   });
-  $(document).on("click",".call-cancel-action", function(){
-    $('.top-box-show').html('')
+  $(document).mouseup(function (e) {
+    var container = new Array();
+    container.push($(".g-details"));
+    container.push($(".g-right-details-wrap"));
+    $.each(container, function (key, value) {
+      if (!$(value).is(e.target) && $(value).has(e.target).length == 0) {
+        $(value).hide(300);
+      }
+    });
+  });
+  $(document).on("click", ".call-cancel-action", function () {
+    $(".top-box-show").html("");
   });
 
+  $(document).on("click", ".copy_info", function () {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($(".meeting.url").text()).select();
+    document.execCommand("copy");
+    $temp.remove();
+    $(".link-conf").show();
+    setTimeout(function () {
+      $(".link-conf").hide();
+    }, 3000);
+  });
+
+  $(document).on("click", ".meeting-details-button", function(){
+    $(".g-details").slideDown(300);
+  });
+  $(document).on("click", ".g-details-heading-attachment", function(){
+    $(".g-details-heading-show").hide();
+    $(".g-details-heading-show-attachment").show();
+    $(this).addClass('active');
+    $(".g-details-heading-detail").removeClass('active');
+  });
+  $(document).on("click", ".g-details-heading-detail", function(){
+    $(".g-details-heading-show").show();
+    $(".g-details-heading-show-attachment").hide();
+    $(this).addClass('active');
+    $(".g-details-heading-attachment").removeClass('active');
+  });
+  var base_url = window.location.origin;
+
+  $(document).on("change", ".custom-file-input", function(){ 
+    var fileName = $(this).val().split("\\").pop();
+    $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+  });
+
+  $(document).on("click", ".share-attach", function(e){
+    e.preventDefault();
+    var att_img = $("#customFile").prop('files')[0];
+    var formData = new FormData();
+    formData.append("zipfile", att_img);
+    formData.append("meeting_id", meeting_id);
+    formData.append("username", user_id);
+    console.log(formData);
+    $.ajax({
+      url: base_url + "/attachimg",
+      type:"POST",
+      data: formData,
+      contentType: false,
+      processData: false,
+      success: function(response){
+        console.log(response);
+      },
+      error: function(){
+        console.log("error");
+      },
+    });
+
+  });
   return {
     _init: function (uid, mid) {
       init(uid, mid);
     },
   };
 })();
-
-
